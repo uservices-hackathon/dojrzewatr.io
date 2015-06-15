@@ -1,0 +1,13 @@
+{
+    "pl": {
+        "this": "pl/devoxx/dojrzewatr",
+        "dependencies" : {
+            "prezentatr" : {
+                "path" : "pl/devoxx/prezentatr"
+            },
+            "butelkatr" : {
+                "path" : "pl/devoxx/butelkatr"
+            }
+        }
+    }
+}

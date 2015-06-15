@@ -1,0 +1,148 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:1.2.3.RELEASE"
+        classpath 'com.ofg:uptodate-gradle-plugin:1.5.1'
+        classpath "io.codearte.accurest:accurest-gradle-plugin:$accurestVersion"
+    }
+}
+
+apply plugin: 'groovy'
+apply plugin: 'spring-boot'
+apply plugin: 'maven-publish'
+apply plugin: 'com.ofg.uptodate'
+apply plugin: 'accurest'
+
+ext {
+    versionPrefix = "CD"
+    buildNrLoc = project.hasProperty('buildNr') ? "${buildNr}" : "000"
+    currentVersion = "${versionPrefix}-${buildNrLoc}"
+    projectGroupId = 'pl.devoxx'
+
+    contractsDir = file("${project.rootDir}/repository/mappings/")
+    wiremockStubsOutputDirRoot = file("${project.buildDir}/production/${project.name}-stubs/")
+    wiremockStubsOutputDir = new File(wiremockStubsOutputDirRoot, 'mappings/')
+}
+
+group = projectGroupId
+version = currentVersion
+
+sourceCompatibility = '1.8'
+
+configurations {
+    all {
+        resolutionStrategy {
+            eachDependency { DependencyResolveDetails details ->
+                // To prevent an accidental usage of groovy-all.jar and groovy.jar in different versions
+                // all modularized Groovy jars are replaced with groovy-all.jar by default.
+                if (details.requested.group == 'org.codehaus.groovy' && details.requested.name != "groovy-all") {
+                    details.useTarget("org.codehaus.groovy:groovy-all:${details.requested.version}")
+                }
+            }
+        }
+    }
+}
+
+project.gradle.projectsEvaluated {
+    applicationDefaultJvmArgs = project.gradle.startParameter.systemPropertiesArgs.entrySet().collect{"-D${it.key}=${it.value}"}
+}
+
+test {
+    jvmArgs = project.gradle.startParameter.systemPropertiesArgs.entrySet().collect{"-D${it.key}=${it.value}"} + ['-Xmx512m']
+    testLogging {
+        exceptionFormat = 'full'
+    }
+}
+
+repositories {
+    mavenLocal()
+    jcenter()
+}
+
+dependencies {
+    compile "org.springframework.boot:spring-boot-starter-web"
+    compile "org.springframework.boot:spring-boot-starter-actuator"
+    compile "org.springframework:spring-context-support"
+    compile 'com.fasterxml.jackson.core:jackson-databind'
+    compile "org.codehaus.jackson:jackson-mapper-asl:$jacksonMapper"
+    compile "org.codehaus.jackson:jackson-core-asl:$jacksonMapper"
+    compile 'com.google.guava:guava:18.0'
+    compile 'org.apache.commons:commons-lang3:3.4'
+    compile 'org.apache.tomcat.embed:tomcat-embed-el'
+    compile 'com.jayway.jsonpath:json-path-assert:0.9.1'
+    compile 'org.yaml:snakeyaml'
+    compile 'org.hibernate:hibernate-validator'
+    compile "org.aspectj:aspectjrt"
+    compile "com.ofg:micro-infra-spring-boot-starter:$microInfraSpringVersion"
+    compile 'org.projectlombok:lombok:1.16.4'
+
+    runtime 'cglib:cglib-nodep:3.1'
+    runtime 'org.objenesis:objenesis:2.1'
+    runtime 'org.aspectj:aspectjweaver'
+
+    testCompile "org.codehaus.groovy:groovy-all"
+    testCompile 'com.jayway.awaitility:awaitility:1.6.3'
+    compile('com.github.tomakehurst:wiremock:1.56') {
+        exclude group: 'org.mortbay.jetty', module: 'servlet-api'
+    }
+    testCompile "org.springframework.boot:spring-boot-starter-test"
+    testCompile "com.ofg:micro-infra-spring-test:$microInfraSpringVersion"
+    testCompile "org.spockframework:spock-spring"
+    testCompile "com.jayway.restassured:rest-assured:$restAssuredVersion"
+    testCompile "com.jayway.restassured:spring-mock-mvc:$restAssuredVersion"
+}
+
+accurest {
+    baseClassForTests = 'pl.devoxx.dojrzewatr.aggregation.BaseMockMvcSpec'
+    basePackageForTests = 'pl.devoxx'
+    contractsDslDir = contractsDir
+    generatedTestSourcesDir = file("${project.buildDir}/generated-sources/accurest")
+    stubsOutputDir = wiremockStubsOutputDir
+}
+
+test.dependsOn { generateAccurest } //See: https://github.com/Codearte/accurest/issues/36
+
+task stubsJar(type: Jar, dependsOn: ["generateWiremockClientStubs"]) {
+    baseName = "${project.name}-stubs"
+    from wiremockStubsOutputDirRoot
+}
+
+bootRepackage {
+    withJarTask = "jar"
+}
+
+//Make sure that fat jar is built before uploading
+project.tasks.findAll { it.name.startsWith('publish') || it.name == 'bintrayUpload' }*.dependsOn { bootRepackage }
+
+artifacts {
+    archives stubsJar
+}
+
+publishing {
+    repositories {
+        maven {
+            url getProperty('mavenRepoUrl')
+            credentials {
+                username getProperty('mavenUser')
+                password getProperty('mavenPassword')
+            }
+        }
+    }
+    publications {
+        stubs(MavenPublication) {
+            artifactId "${project.name}-stubs"
+            artifact stubsJar
+        }
+        mavenJava(MavenPublication) {
+            from components.java
+            pom.withXml {
+                //Remove dependencies - everything is embedded in JAR created by Spring Boot
+                asNode().dependencies.replaceNode{ null }
+            }
+        }
+    }
+}
