@@ -7,5 +7,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Data
 public class BrewProperties {
 
-    private Integer timeout = 1000;
+    private Long timeout = 500L;
 }
