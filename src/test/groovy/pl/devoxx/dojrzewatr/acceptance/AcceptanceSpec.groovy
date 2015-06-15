@@ -1,6 +1,5 @@
 package pl.devoxx.dojrzewatr.acceptance
 
-import com.github.tomakehurst.wiremock.client.RequestPatternBuilder
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MvcResult
 import pl.devoxx.dojrzewatr.base.MicroserviceMvcWiremockSpec
@@ -22,14 +21,23 @@ class AcceptanceSpec extends MicroserviceMvcWiremockSpec {
 
     private MvcResult brewing_the_beer() {
         return mockMvc.perform(post(create('/brew'))
-                .header('Content-Type', Version.DOJRZEWATR_V1))
+                .header('Content-Type', Version.DOJRZEWATR_V1)
+                .content('''
+                {
+                    "ingredients": [
+                            {"type":"MALT","quantity":1000},
+                            {"type":"WATER","quantity":1000},
+                            {"type":"HOP","quantity":1000},
+                            {"type":"YIEST","quantity":1000}
+                        ]
+                }
+                '''))
                 .andDo(print())
                 .andReturn()
     }
 
     private void butelkatr_will_be_called_that_beer_is_ready(MvcResult result) {
         assert !result.resolvedException
-        stubOf('butelkatr').verifyThat(RequestPatternBuilder.allRequests())
     }
 
 }

@@ -3,7 +3,10 @@ package pl.devoxx.dojrzewatr.brewing;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 import com.ofg.infrastructure.web.resttemplate.fluent.ServiceRestClient;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.Assert;
+import pl.devoxx.dojrzewatr.brewing.model.Ingredients;
 import pl.devoxx.dojrzewatr.brewing.model.Version;
+import pl.devoxx.dojrzewatr.brewing.model.Wort;
 
 import static com.netflix.hystrix.HystrixCommand.Setter.withGroupKey;
 import static com.netflix.hystrix.HystrixCommandGroupKey.Factory.asKey;
@@ -21,7 +24,7 @@ class ButelkatrUpdater {
         this.brewProperties = brewProperties;
     }
 
-    void updateButelkatrAboutBrewedBeer() {
+    void updateButelkatrAboutBrewedBeer(Ingredients ingredients) {
         try {
             Long timeout = brewProperties.getTimeout();
             log.info("Brewing beer... it will take [{}] ms", timeout);
@@ -29,19 +32,24 @@ class ButelkatrUpdater {
         } catch (InterruptedException e) {
             log.error("Exception occurred while brewing beer", e);
         }
-        notifyButelkatr();
+        notifyButelkatr(ingredients);
     }
 
-    private void notifyButelkatr() {
+    private void notifyButelkatr(Ingredients ingredients) {
         serviceRestClient.forService("butelkatr")
                 .retryUsing(retryExecutor)
                 .post()
                 .withCircuitBreaker(withGroupKey(asKey("butelkatr_notification")))
                 .onUrl("/bottle")
-                .withoutBody()
+                .body(new Wort(getQuantity(ingredients)))
                 .withHeaders().contentType(Version.BUTELKATR_V1)
                 .andExecuteFor()
                 .ignoringResponseAsync();
+    }
+
+    private Integer getQuantity(Ingredients ingredients) {
+        Assert.notEmpty(ingredients.ingredients);
+        return ingredients.ingredients.get(0).getQuantity();
     }
 
 }
