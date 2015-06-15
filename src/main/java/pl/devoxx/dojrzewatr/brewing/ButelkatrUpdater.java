@@ -1,5 +1,7 @@
 package pl.devoxx.dojrzewatr.brewing;
 
+import com.codahale.metrics.Meter;
+import com.codahale.metrics.MetricRegistry;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 import com.ofg.infrastructure.web.resttemplate.fluent.ServiceRestClient;
 import lombok.extern.slf4j.Slf4j;
@@ -17,11 +19,13 @@ class ButelkatrUpdater {
     private final ServiceRestClient serviceRestClient;
     private final RetryExecutor retryExecutor;
     private final BrewProperties brewProperties;
+    private final Meter brewMeter;
 
-    public ButelkatrUpdater(ServiceRestClient serviceRestClient, RetryExecutor retryExecutor, BrewProperties brewProperties) {
+    public ButelkatrUpdater(ServiceRestClient serviceRestClient, RetryExecutor retryExecutor, BrewProperties brewProperties, MetricRegistry metricRegistry) {
         this.serviceRestClient = serviceRestClient;
         this.retryExecutor = retryExecutor;
         this.brewProperties = brewProperties;
+        this.brewMeter = metricRegistry.meter("brew");
     }
 
     void updateButelkatrAboutBrewedBeer(Ingredients ingredients) {
@@ -29,6 +33,7 @@ class ButelkatrUpdater {
             Long timeout = brewProperties.getTimeout();
             log.info("Brewing beer... it will take [{}] ms", timeout);
             Thread.sleep(timeout);
+            brewMeter.mark();
         } catch (InterruptedException e) {
             log.error("Exception occurred while brewing beer", e);
         }
