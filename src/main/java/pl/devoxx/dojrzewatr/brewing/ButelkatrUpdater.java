@@ -3,8 +3,10 @@ package pl.devoxx.dojrzewatr.brewing;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.nurkiewicz.asyncretry.RetryExecutor;
+import com.ofg.infrastructure.correlationid.CorrelationIdHolder;
 import com.ofg.infrastructure.web.resttemplate.fluent.ServiceRestClient;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 import pl.devoxx.dojrzewatr.brewing.model.Ingredients;
 import pl.devoxx.dojrzewatr.brewing.model.Version;
@@ -29,6 +31,7 @@ class ButelkatrUpdater {
     }
 
     void updateButelkatrAboutBrewedBeer(Ingredients ingredients) {
+        notifyPrezentatr();
         try {
             Long timeout = brewProperties.getTimeout();
             log.info("Brewing beer... it will take [{}] ms", timeout);
@@ -38,6 +41,14 @@ class ButelkatrUpdater {
             log.error("Exception occurred while brewing beer", e);
         }
         notifyButelkatr(ingredients);
+    }
+
+    private void notifyPrezentatr() {
+        serviceRestClient.forService("prezentatr").retryUsing(retryExecutor)
+                .put().onUrl("/feed/dojrzewatr/" + CorrelationIdHolder.get())
+                .withoutBody()
+                .withHeaders().contentType(Version.PREZENTATR_V1)
+                .andExecuteFor().ignoringResponseAsync();
     }
 
     private void notifyButelkatr(Ingredients ingredients) {
