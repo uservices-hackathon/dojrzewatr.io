@@ -2,16 +2,19 @@ package pl.devoxx.dojrzewatr.brewing;
 
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
+import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 import com.ofg.infrastructure.correlationid.CorrelationIdHolder;
+import com.ofg.infrastructure.hystrix.CorrelatedCommand;
 import com.ofg.infrastructure.web.resttemplate.fluent.ServiceRestClient;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.MDC;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.util.Assert;
 import pl.devoxx.dojrzewatr.brewing.model.Ingredients;
 import pl.devoxx.dojrzewatr.brewing.model.Version;
 import pl.devoxx.dojrzewatr.brewing.model.Wort;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static com.netflix.hystrix.HystrixCommand.Setter.withGroupKey;
 import static com.netflix.hystrix.HystrixCommandGroupKey.Factory.asKey;
@@ -19,6 +22,7 @@ import static com.netflix.hystrix.HystrixCommandGroupKey.Factory.asKey;
 @Slf4j
 class ButelkatrUpdater {
 
+    private static final ExecutorService EXECUTORS = Executors.newFixedThreadPool(5);
     private final ServiceRestClient serviceRestClient;
     private final RetryExecutor retryExecutor;
     private final BrewProperties brewProperties;
@@ -31,23 +35,28 @@ class ButelkatrUpdater {
         this.brewMeter = metricRegistry.meter("brew");
     }
 
-    @Async
-    public void updateButelkatrAboutBrewedBeer(Ingredients ingredients) {
-        notifyPrezentatr();
-        try {
-            Long timeout = brewProperties.getTimeout();
-            log.info("Brewing beer... it will take [{}] ms", timeout);
-            Thread.sleep(timeout);
-            brewMeter.mark();
-        } catch (InterruptedException e) {
-            log.error("Exception occurred while brewing beer", e);
-        }
-        notifyButelkatr(ingredients);
+    public void updateButelkatrAboutBrewedBeer(final Ingredients ingredients) {
+        new CorrelatedCommand<Object>(HystrixCommandGroupKey.Factory.asKey("butelkatr_updater")) {
+            @Override
+            public Object doRun() throws Exception {
+                notifyPrezentatr();
+                try {
+                    Long timeout = brewProperties.getTimeout();
+                    log.info("Brewing beer... it will take [{}] ms", timeout);
+                    Thread.sleep(timeout);
+                    brewMeter.mark();
+                } catch (InterruptedException e) {
+                    log.error("Exception occurred while brewing beer", e);
+                }
+                notifyButelkatr(ingredients);
+                return null;
+            }
+        }.execute();
     }
 
     private void notifyPrezentatr() {
         serviceRestClient.forService("prezentatr").retryUsing(retryExecutor)
-                .put().onUrl("/feed/dojrzewatr/" + MDC.get(CorrelationIdHolder.CORRELATION_ID_HEADER))
+                .put().onUrl("/feed/dojrzewatr/" + CorrelationIdHolder.get())
                 .withoutBody()
                 .withHeaders().contentType(Version.PREZENTATR_V1)
                 .andExecuteFor().ignoringResponseAsync();
