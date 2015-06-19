@@ -13,16 +13,12 @@ import pl.devoxx.dojrzewatr.brewing.model.Ingredients;
 import pl.devoxx.dojrzewatr.brewing.model.Version;
 import pl.devoxx.dojrzewatr.brewing.model.Wort;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import static com.netflix.hystrix.HystrixCommand.Setter.withGroupKey;
 import static com.netflix.hystrix.HystrixCommandGroupKey.Factory.asKey;
 
 @Slf4j
 class ButelkatrUpdater {
 
-    private static final ExecutorService EXECUTORS = Executors.newFixedThreadPool(5);
     private final ServiceRestClient serviceRestClient;
     private final RetryExecutor retryExecutor;
     private final BrewProperties brewProperties;
