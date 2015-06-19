@@ -6,7 +6,7 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 import com.ofg.infrastructure.correlationid.CorrelationIdHolder;
 import com.ofg.infrastructure.web.resttemplate.fluent.ServiceRestClient;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
+import org.slf4j.MDC;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.util.Assert;
 import pl.devoxx.dojrzewatr.brewing.model.Ingredients;
@@ -32,8 +32,7 @@ class ButelkatrUpdater {
     }
 
     @Async
-    public void updateButelkatrAboutBrewedBeer(Ingredients ingredients, String correlationId) {
-        CorrelationIdHolder.set(correlationId);
+    public void updateButelkatrAboutBrewedBeer(Ingredients ingredients) {
         notifyPrezentatr();
         try {
             Long timeout = brewProperties.getTimeout();
@@ -48,7 +47,7 @@ class ButelkatrUpdater {
 
     private void notifyPrezentatr() {
         serviceRestClient.forService("prezentatr").retryUsing(retryExecutor)
-                .put().onUrl("/feed/dojrzewatr/" + CorrelationIdHolder.get())
+                .put().onUrl("/feed/dojrzewatr/" + MDC.get(CorrelationIdHolder.CORRELATION_ID_HEADER))
                 .withoutBody()
                 .withHeaders().contentType(Version.PREZENTATR_V1)
                 .andExecuteFor().ignoringResponseAsync();
