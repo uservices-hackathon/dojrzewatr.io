@@ -7,6 +7,7 @@ import com.ofg.infrastructure.correlationid.CorrelationIdHolder;
 import com.ofg.infrastructure.web.resttemplate.fluent.ServiceRestClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.util.Assert;
 import pl.devoxx.dojrzewatr.brewing.model.Ingredients;
 import pl.devoxx.dojrzewatr.brewing.model.Version;
@@ -30,7 +31,9 @@ class ButelkatrUpdater {
         this.brewMeter = metricRegistry.meter("brew");
     }
 
-    void updateButelkatrAboutBrewedBeer(Ingredients ingredients) {
+    @Async
+    public void updateButelkatrAboutBrewedBeer(Ingredients ingredients, String correlationId) {
+        CorrelationIdHolder.set(correlationId);
         notifyPrezentatr();
         try {
             Long timeout = brewProperties.getTimeout();
