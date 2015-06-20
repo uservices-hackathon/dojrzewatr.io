@@ -50,7 +50,7 @@ class ButelkatrUpdater {
 
     private void notifyPrezentatr() {
         serviceRestClient.forService("prezentatr").retryUsing(retryExecutor)
-                .put().onUrl("/feed/dojrzewatr/" + CorrelationIdHolder.get())
+                .put().onUrl("/feed/dojrzewatr")
                 .withoutBody()
                 .withHeaders().contentType(Version.PREZENTATR_V1)
                 .andExecuteFor().ignoringResponseAsync();
