@@ -5,6 +5,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 import com.ofg.infrastructure.correlationid.CorrelationIdHolder;
+import com.ofg.infrastructure.correlationid.CorrelationIdUpdater;
 import com.ofg.infrastructure.hystrix.CorrelatedCommand;
 import com.ofg.infrastructure.web.resttemplate.fluent.ServiceRestClient;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,9 @@ class ButelkatrUpdater {
         this.brewMeter = metricRegistry.meter("brew");
     }
 
+    @Async
     public void updateButelkatrAboutBrewedBeer(final Ingredients ingredients) {
+        CorrelationIdUpdater.updateCorrelationId(correlationId);
         new CorrelatedCommand<Object>(HystrixCommandGroupKey.Factory.asKey("butelkatr_updater")) {
             @Override
             public Object doRun() throws Exception {
