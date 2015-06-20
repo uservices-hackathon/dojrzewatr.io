@@ -9,6 +9,7 @@ import com.ofg.infrastructure.correlationid.CorrelationIdUpdater;
 import com.ofg.infrastructure.hystrix.CorrelatedCommand;
 import com.ofg.infrastructure.web.resttemplate.fluent.ServiceRestClient;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.util.Assert;
 import pl.devoxx.dojrzewatr.brewing.model.Ingredients;
 import pl.devoxx.dojrzewatr.brewing.model.Version;
@@ -33,24 +34,18 @@ class ButelkatrUpdater {
     }
 
     @Async
-    public void updateButelkatrAboutBrewedBeer(final Ingredients ingredients) {
+    public void updateButelkatrAboutBrewedBeer(final Ingredients ingredients, final String correlationId) {
         CorrelationIdUpdater.updateCorrelationId(correlationId);
-        new CorrelatedCommand<Object>(HystrixCommandGroupKey.Factory.asKey("butelkatr_updater")) {
-            @Override
-            public Object doRun() throws Exception {
-                notifyPrezentatr();
-                try {
-                    Long timeout = brewProperties.getTimeout();
-                    log.info("Brewing beer... it will take [{}] ms", timeout);
-                    Thread.sleep(timeout);
-                    brewMeter.mark();
-                } catch (InterruptedException e) {
-                    log.error("Exception occurred while brewing beer", e);
-                }
-                notifyButelkatr(ingredients);
-                return null;
-            }
-        }.execute();
+        notifyPrezentatr();
+        try {
+            Long timeout = brewProperties.getTimeout();
+            log.info("Brewing beer... it will take [{}] ms", timeout);
+            Thread.sleep(timeout);
+            brewMeter.mark();
+        } catch (InterruptedException e) {
+            log.error("Exception occurred while brewing beer", e);
+        }
+        notifyButelkatr(ingredients);
     }
 
     private void notifyPrezentatr() {
