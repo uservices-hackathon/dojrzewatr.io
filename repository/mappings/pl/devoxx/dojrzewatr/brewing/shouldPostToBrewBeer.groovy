@@ -5,14 +5,14 @@ io.codearte.accurest.dsl.GroovyDsl.make {
         headers {
             header 'Content-Type': 'application/vnd.pl.devoxx.dojrzewatr.v1+json'
         }
-        body(
-                ingredients: [
-                        [type: 'MALT', quantity: 1000],
-                        [type: 'WATER', quantity: 1000],
-                        [type: 'HOP', quantity: 1000],
-                        [type: 'YIEST', quantity: 1000]
+        body("""{
+            "ingredients": [
+                        { "type": "MALT", "quantity": "${value(client(regex("[0-9]+")), server(1000))}" },
+                        { "type" : "WATER", "quantity": "${value(client(regex("[0-9]+")), server(1000))}" },
+                        { "type" : "HOP", "quantity": "${value(client(regex("[0-9]+")), server(1000))}" },
+                        { "type" : "YIEST", "quantity": "${value(client(regex("[0-9]+")), server(1000))}" }
                 ]
-        )
+        }""")
     }
     response {
         status 200
