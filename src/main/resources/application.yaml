@@ -1,3 +1,4 @@
+spring.application.name: dojrzewatr
 metrics.path.app: dojrzewatr
 rest.api.urls.to.list: .*brew.*
 
