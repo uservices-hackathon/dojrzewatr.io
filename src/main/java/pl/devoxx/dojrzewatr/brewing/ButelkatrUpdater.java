@@ -2,21 +2,18 @@ package pl.devoxx.dojrzewatr.brewing;
 
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
-import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.nurkiewicz.asyncretry.RetryExecutor;
-import com.ofg.infrastructure.correlationid.CorrelationIdHolder;
 import com.ofg.infrastructure.correlationid.CorrelationIdUpdater;
-import com.ofg.infrastructure.hystrix.CorrelatedCommand;
 import com.ofg.infrastructure.web.resttemplate.fluent.ServiceRestClient;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.sleuth.Trace;
+import org.springframework.cloud.sleuth.TraceScope;
+import org.springframework.cloud.sleuth.sampler.AlwaysSampler;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.util.Assert;
 import pl.devoxx.dojrzewatr.brewing.model.Ingredients;
 import pl.devoxx.dojrzewatr.brewing.model.Version;
 import pl.devoxx.dojrzewatr.brewing.model.Wort;
-
-import static com.netflix.hystrix.HystrixCommand.Setter.withGroupKey;
-import static com.netflix.hystrix.HystrixCommandGroupKey.Factory.asKey;
 
 @Slf4j
 class ButelkatrUpdater {
@@ -25,11 +22,13 @@ class ButelkatrUpdater {
     private final RetryExecutor retryExecutor;
     private final BrewProperties brewProperties;
     private final Meter brewMeter;
+    private final Trace trace;
 
-    public ButelkatrUpdater(ServiceRestClient serviceRestClient, RetryExecutor retryExecutor, BrewProperties brewProperties, MetricRegistry metricRegistry) {
+    public ButelkatrUpdater(ServiceRestClient serviceRestClient, RetryExecutor retryExecutor, BrewProperties brewProperties, MetricRegistry metricRegistry, Trace trace) {
         this.serviceRestClient = serviceRestClient;
         this.retryExecutor = retryExecutor;
         this.brewProperties = brewProperties;
+        this.trace = trace;
         this.brewMeter = metricRegistry.meter("brew");
     }
 
@@ -49,23 +48,25 @@ class ButelkatrUpdater {
     }
 
     private void notifyPrezentatr() {
-        serviceRestClient.forService("prezentatr").retryUsing(retryExecutor)
+        TraceScope scope = this.trace.startSpan("calling_prezentatr", new AlwaysSampler(), null);
+        serviceRestClient.forService("prezentatr")
                 .put().onUrl("/feed/dojrzewatr")
                 .withoutBody()
                 .withHeaders().contentType(Version.PREZENTATR_V1)
-                .andExecuteFor().ignoringResponseAsync();
+                .andExecuteFor().ignoringResponse();
+        scope.close();
     }
 
     private void notifyButelkatr(Ingredients ingredients) {
+        TraceScope scope = this.trace.startSpan("calling_butelkatr", new AlwaysSampler(), null);
         serviceRestClient.forService("butelkatr")
-                .retryUsing(retryExecutor)
                 .post()
-                .withCircuitBreaker(withGroupKey(asKey("butelkatr_notification")))
                 .onUrl("/bottle")
                 .body(new Wort(getQuantity(ingredients)))
                 .withHeaders().contentType(Version.BUTELKATR_V1)
                 .andExecuteFor()
-                .ignoringResponseAsync();
+                .ignoringResponse();
+        scope.close();
     }
 
     private Integer getQuantity(Ingredients ingredients) {
