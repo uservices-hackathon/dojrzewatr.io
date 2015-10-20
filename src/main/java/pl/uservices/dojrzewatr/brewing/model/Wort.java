@@ -1,4 +1,4 @@
-package pl.devoxx.dojrzewatr.brewing.model;
+package pl.uservices.dojrzewatr.brewing.model;
 
 import lombok.Data;
 

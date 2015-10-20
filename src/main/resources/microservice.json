@@ -1,12 +1,12 @@
 {
     "pl": {
-        "this": "pl/wjug/dojrzewatr",
+        "this": "pl/uservices/dojrzewatr",
         "dependencies" : {
             "prezentatr" : {
-                "path" : "pl/wjug/prezentatr"
+                "path" : "pl/uservices/prezentatr"
             },
             "butelkatr" : {
-                "path" : "pl/wjug/butelkatr"
+                "path" : "pl/uservices/butelkatr"
             }
         }
     }

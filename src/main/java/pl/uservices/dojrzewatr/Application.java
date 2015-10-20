@@ -1,4 +1,4 @@
-package pl.devoxx.dojrzewatr;
+package pl.uservices.dojrzewatr;
 
 import com.ofg.infrastructure.environment.EnvironmentSetupVerifier;
 import org.springframework.boot.SpringApplication;

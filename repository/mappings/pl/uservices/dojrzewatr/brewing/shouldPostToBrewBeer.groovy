@@ -3,7 +3,7 @@ io.codearte.accurest.dsl.GroovyDsl.make {
         method 'POST'
         url '/brew'
         headers {
-            header 'Content-Type': 'application/vnd.pl.devoxx.dojrzewatr.v1+json'
+            header 'Content-Type': 'application/vnd.pl.uservices.dojrzewatr.v1+json'
         }
         body("""{
             "ingredients": [

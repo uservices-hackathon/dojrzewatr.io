@@ -11,8 +11,6 @@ before_script:
  - "export JAVA_OPTS=-Xmx512m"
 
 script:
-- git clone https://github.com/2015-06-devoxx-microservices/presentatr.io.git && ./presentatr.io/gradlew clean build publishToMavenLocal -x test
-- git clone https://github.com/2015-06-devoxx-microservices/butelkatr.io.git && ./butelkatr.io/gradlew clean build publishToMavenLocal -x test
 - ./gradlew clean build --stacktrace
 
 env:

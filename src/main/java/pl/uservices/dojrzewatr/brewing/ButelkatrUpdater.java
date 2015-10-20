@@ -1,4 +1,4 @@
-package pl.devoxx.dojrzewatr.brewing;
+package pl.uservices.dojrzewatr.brewing;
 
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
@@ -11,9 +11,9 @@ import org.springframework.cloud.sleuth.TraceScope;
 import org.springframework.cloud.sleuth.sampler.AlwaysSampler;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.util.Assert;
-import pl.devoxx.dojrzewatr.brewing.model.Ingredients;
-import pl.devoxx.dojrzewatr.brewing.model.Version;
-import pl.devoxx.dojrzewatr.brewing.model.Wort;
+import pl.uservices.dojrzewatr.brewing.model.Ingredients;
+import pl.uservices.dojrzewatr.brewing.model.Version;
+import pl.uservices.dojrzewatr.brewing.model.Wort;
 
 @Slf4j
 class ButelkatrUpdater {

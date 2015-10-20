@@ -1,4 +1,4 @@
-package pl.devoxx.dojrzewatr.brewing;
+package pl.uservices.dojrzewatr.brewing;
 
 import com.codahale.metrics.MetricRegistry;
 import com.nurkiewicz.asyncretry.RetryExecutor;

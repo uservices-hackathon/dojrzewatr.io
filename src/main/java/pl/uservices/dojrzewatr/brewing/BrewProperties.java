@@ -1,4 +1,4 @@
-package pl.devoxx.dojrzewatr.brewing;
+package pl.uservices.dojrzewatr.brewing;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

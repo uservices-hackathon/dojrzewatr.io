@@ -1,9 +1,9 @@
-package pl.devoxx.dojrzewatr.acceptance
+package pl.uservices.dojrzewatr.acceptance
 
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MvcResult
-import pl.devoxx.dojrzewatr.base.MicroserviceMvcWiremockSpec
-import pl.devoxx.dojrzewatr.brewing.model.Version
+import pl.uservices.dojrzewatr.brewing.model.Version
+import pl.uservices.dojrzewatr.base.MicroserviceMvcWiremockSpec
 
 import static java.net.URI.create
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post

@@ -1,4 +1,4 @@
-package pl.devoxx.dojrzewatr.base
+package pl.uservices.dojrzewatr.base
 
 import com.ofg.infrastructure.base.MvcWiremockIntegrationSpec
 import com.ofg.infrastructure.discovery.web.HttpMockServer
@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationContextLoader
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.setup.ConfigurableMockMvcBuilder
-import pl.devoxx.dojrzewatr.Application
+import pl.uservices.dojrzewatr.Application
 
 @ContextConfiguration(classes = [Application], loader = SpringApplicationContextLoader)
 class MicroserviceMvcWiremockSpec extends MvcWiremockIntegrationSpec {
