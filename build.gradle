@@ -126,7 +126,7 @@ accurest {
 
 test.dependsOn { generateAccurest } //See: https://github.com/Codearte/accurest/issues/36
 
-task stubsJar(type: Jar, dependsOn: ["generateWiremockClientStubs"]) {
+task stubsJar(type: Jar, dependsOn: ["generateWireMockClientStubs"]) {
     baseName = "${project.name}-stubs"
     from wiremockStubsOutputDirRoot
 }
