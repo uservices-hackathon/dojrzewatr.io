@@ -4,10 +4,8 @@ import spock.lang.Specification
 
 abstract class BaseMockMvcSpec extends Specification {
 
-    ButelkatrUpdater butelkatrUpdater = Stub()
-
     def setup() {
-        RestAssuredMockMvc.standaloneSetup(new BrewController(butelkatrUpdater))
+        RestAssuredMockMvc.standaloneSetup()
     }
 
 }

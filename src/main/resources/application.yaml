@@ -1,6 +1,5 @@
 spring.application.name: dojrzewatr
 metrics.path.app: dojrzewatr
-rest.api.urls.to.list: .*brew.*
 
 stubrunner.stubs:
   repository.root: "http://nexus.uservices.pl:8081/nexus/content/repositories/releases/"
