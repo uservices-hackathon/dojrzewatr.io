@@ -13,8 +13,6 @@ package pl.uservices.dojrzewatr.endpoints.wort;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-import java.util.Date;
-
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -43,13 +41,13 @@ public class WortEndpoint
 	}
 
 	@RequestMapping(method = POST)
-	public @ResponseBody ResponseEntity saveWort(@Valid @RequestBody final WortDto wort) {
+	public @ResponseBody ResponseEntity saveWort(@Valid @RequestBody final Wort wort) {
 
 		LOGGER.debug("Saving wort: " + wort.toString());
 
-		warehouse.addWort(new Wort(wort.getQuantity(), new Date().getTime()));
+		warehouse.addWort(wort);
 
-		LOGGER.info("Wort: " + wort.toString() + " saved.");
+		LOGGER.info("Wort: '" + wort.toString() + "' saved.");
 
 		return ResponseEntity.noContent().build();
 	}
