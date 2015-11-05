@@ -51,4 +51,9 @@ public class Warehouse
 		final int newState = warehouseState.addAndGet(stateChange);
 		prezentatrClient.sendWarehouseState(new WarehouseStateDto(newState));
 	}
+
+	public AtomicInteger getWarehouseState()
+	{
+		return warehouseState;
+	}
 }
