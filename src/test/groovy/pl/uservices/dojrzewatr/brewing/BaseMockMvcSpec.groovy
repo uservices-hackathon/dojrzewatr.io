@@ -12,7 +12,7 @@ abstract class BaseMockMvcSpec extends Specification {
 
         def warehouse = Mockito.mock(Warehouse)
 
-        Mockito.verify(warehouse)).addWort(Mockito.any(Wort.class))
+        Mockito.verify(warehouse).addWort(Mockito.any(Wort.class))
 
         RestAssuredMockMvc.standaloneSetup(new WortEndpoint(warehouse))
         RestAssuredMockMvc.enableLoggingOfRequestAndResponseIfValidationFails()

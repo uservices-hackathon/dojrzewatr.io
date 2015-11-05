@@ -45,6 +45,8 @@ public class WortEndpoint
 
 		warehouse.addWort(wort);
 
+		LOGGER.info("Wort: " + wort.toString() + " saved.");
+
 		return ResponseEntity.noContent().build();
 	}
 }

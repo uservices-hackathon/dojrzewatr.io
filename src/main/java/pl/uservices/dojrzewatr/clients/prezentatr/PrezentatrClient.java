@@ -12,6 +12,7 @@
 package pl.uservices.dojrzewatr.clients.prezentatr;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import com.netflix.hystrix.HystrixCommand;
@@ -21,7 +22,7 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 import com.ofg.infrastructure.discovery.ServiceAlias;
 import com.ofg.infrastructure.web.resttemplate.fluent.ServiceRestClient;
 
-@Service
+@Component
 public class PrezentatrClient
 {
 	private static final ServiceAlias PREZENTATR_SERVICE = new ServiceAlias("prezentatr");

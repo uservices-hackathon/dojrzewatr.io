@@ -12,6 +12,7 @@
 package pl.uservices.dojrzewatr.clients.butelkatr;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
@@ -20,6 +21,7 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 import com.ofg.infrastructure.discovery.ServiceAlias;
 import com.ofg.infrastructure.web.resttemplate.fluent.ServiceRestClient;
 
+@Component
 public class ButelkatrClient
 {
 	private static final ServiceAlias BUTELKATR_SERVICE = new ServiceAlias("butelkatr");
