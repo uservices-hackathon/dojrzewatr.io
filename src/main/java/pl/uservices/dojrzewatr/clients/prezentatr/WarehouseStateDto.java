@@ -15,7 +15,7 @@ public class WarehouseStateDto
 {
 	private final Integer warehouseState;
 
-	public WarehouseStateDto(final Integer warehouseStateQuantity) {
+	public WarehouseStateDto(final Integer warehouseState) {
 		this.warehouseState = warehouseState;
 	}
 
