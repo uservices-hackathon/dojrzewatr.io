@@ -50,6 +50,8 @@ public class PrezentatrClient
 						.andCommandKey(PREZENTATR_SEND_WAREHOUSE_STATE_CMD_KEY))
 				.onUrl("/wort")
 				.body(warehouseState)
+				.withHeaders().contentType("application/prezentator.v1+json")
+				.andExecuteFor()
 				.ignoringResponse();
 	}
 }
