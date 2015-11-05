@@ -17,6 +17,6 @@ public class WarehouseLevel
 	@Autowired
 	WarehouseLevel(MetricRegistry metricRegistry,  Warehouse warehouse){
 		this.warehouse = warehouse;
-		metricRegistry.register("amountInWarehouse", (Gauge<AtomicInteger>) () -> warehouse.getWarehouseState());
+		metricRegistry.register("amountInWarehouse", (Gauge<Integer>) () -> warehouse.getWarehouseState().get());
 	}
 }
