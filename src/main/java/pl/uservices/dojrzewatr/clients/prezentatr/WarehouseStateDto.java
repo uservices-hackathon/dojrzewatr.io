@@ -13,13 +13,13 @@ package pl.uservices.dojrzewatr.clients.prezentatr;
 
 public class WarehouseStateDto
 {
-	private final Integer warehouseStateQuantity;
+	private final Integer warehouseState;
 
 	public WarehouseStateDto(final Integer warehouseStateQuantity) {
-		this.warehouseStateQuantity = warehouseStateQuantity;
+		this.warehouseState = warehouseState;
 	}
 
 	public Integer getWarehouseStateQuantity() {
-		return warehouseStateQuantity;
+		return warehouseState;
 	}
 }
