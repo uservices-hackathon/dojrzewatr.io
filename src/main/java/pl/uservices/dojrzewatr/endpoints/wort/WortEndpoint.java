@@ -15,6 +15,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.util.Date;
 
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +43,7 @@ public class WortEndpoint
 	}
 
 	@RequestMapping(method = POST)
-	public @ResponseBody ResponseEntity saveWort(@RequestBody final WortDto wort) {
+	public @ResponseBody ResponseEntity saveWort(@Valid @RequestBody final WortDto wort) {
 
 		LOGGER.debug("Saving wort: " + wort.toString());
 
