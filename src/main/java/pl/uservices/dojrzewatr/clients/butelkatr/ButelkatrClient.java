@@ -48,7 +48,7 @@ public class ButelkatrClient
 						.andCommandKey(BUTELKATR_SEND_BEER_QUANTITY_CMD_KEY))
 				.onUrl("/beer")
 				.body(beerQuantity)
-				.withHeaders().contentType("application/butelkatr.v1+json")
+				.withHeaders().contentType("application/butelkator.v1+json")
 				.andExecuteFor()
 				.ignoringResponse();
 	}
