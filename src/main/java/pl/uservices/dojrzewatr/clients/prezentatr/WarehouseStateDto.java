@@ -19,7 +19,7 @@ public class WarehouseStateDto
 		this.warehouseState = warehouseState;
 	}
 
-	public Integer getWarehouseStateQuantity() {
+	public Integer getWarehouseState() {
 		return warehouseState;
 	}
 }
