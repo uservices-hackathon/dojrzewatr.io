@@ -1,6 +1,8 @@
 package pl.uservices.dojrzewatr;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import pl.uservices.dojrzewatr.clients.ButelkatrClient;
 import pl.uservices.dojrzewatr.clients.PrezentatrClient;
 
@@ -8,6 +10,7 @@ import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 
+@Component
 public class Warehouse
 {
 	@Autowired
@@ -17,6 +20,7 @@ public class Warehouse
 
 	private final ConcurrentLinkedQueue<Wort> worts = new ConcurrentLinkedQueue<Wort>();
 
+	@Scheduled(fixedRate = 30000)
 	public void checkWort()
 	{
 		final long currentTimestamp = new Date().getTime();
