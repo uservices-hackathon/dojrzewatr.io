@@ -12,6 +12,5 @@
 +	}
 +	response {
 +		status 204
-+		}
 +	}
 +}
