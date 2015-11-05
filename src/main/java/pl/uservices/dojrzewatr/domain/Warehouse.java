@@ -1,25 +1,27 @@
-package pl.uservices.dojrzewatr;
+package pl.uservices.dojrzewatr.domain;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
-import pl.uservices.dojrzewatr.clients.ButelkatrClient;
-import pl.uservices.dojrzewatr.clients.PrezentatrClient;
+import org.springframework.stereotype.Component;;
+import pl.uservices.dojrzewatr.clients.butelkatr.BeerQuantityDto;
+import pl.uservices.dojrzewatr.clients.butelkatr.ButelkatrClient;
+import pl.uservices.dojrzewatr.clients.prezentatr.PrezentatrClient;
+import pl.uservices.dojrzewatr.clients.prezentatr.WarehouseStateDto;
 
 import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-
 @Component
 public class Warehouse
 {
+	private final static Logger LOGGER = LoggerFactory.getLogger(Warehouse.class);
+
 	@Autowired
 	private PrezentatrClient prezentatrClient;
 	@Autowired
 	private ButelkatrClient butelkatrClient;
-	final static Logger LOGGER = LoggerFactory.getLogger(Warehouse.class);
 
 	private final ConcurrentLinkedQueue<Wort> worts = new ConcurrentLinkedQueue<Wort>();
 
@@ -48,8 +50,8 @@ public class Warehouse
 				amountInWarehouse += w.getAmount();
 			}
 			LOGGER.info("sending beer");
-			butelkatrClient.sendBeerQuantity(beerAmount);
-			prezentatrClient.sendWarehouseState(amountInWarehouse);
+			butelkatrClient.sendBeerQuantity(new BeerQuantityDto(beerAmount));
+			prezentatrClient.sendWarehouseState(new WarehouseStateDto(amountInWarehouse));
 		}
 	}
 

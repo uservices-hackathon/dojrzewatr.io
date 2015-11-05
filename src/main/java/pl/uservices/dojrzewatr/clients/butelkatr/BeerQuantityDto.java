@@ -9,11 +9,17 @@
  * Information and shall use it only in accordance with the terms of the
  * license agreement you entered into with hybris.
  */
-package pl.uservices.dojrzewatr.clients;
+package pl.uservices.dojrzewatr.clients.butelkatr;
 
-public class PrezentatrClient
+public class BeerQuantityDto
 {
-	public void sendWarehouseState(final Integer warehauseState) {
-		// TODO
+	private final Integer quantity;
+
+	public BeerQuantityDto(final Integer quantity) {
+		this.quantity = quantity;
+	}
+
+	public Integer getQuantity() {
+		return quantity;
 	}
 }

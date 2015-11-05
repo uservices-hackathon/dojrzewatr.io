@@ -1,4 +1,4 @@
-package pl.uservices.dojrzewatr;
+package pl.uservices.dojrzewatr.domain;
 
 /**
  * Created: 11/5/15
