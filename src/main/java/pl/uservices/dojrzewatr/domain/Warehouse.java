@@ -31,18 +31,19 @@ public class Warehouse
 	@Async
 	public void addWort(Wort wort) {
 
-		updateStateAndNotify(wort.getAmount());
+		updateStateAndNotify(wort.getQuantity());
 
 		try {
-
 			Thread.sleep(MATURATION_TIME);
-
-			butelkatrClient.sendBeerQuantity(new BeerQuantityDto(wort.getAmount()));
-
-			updateStateAndNotify(-wort.getAmount());
 		}
-		catch(final Exception e) {
+		catch(final InterruptedException e) {
 			LOGGER.error("Error in sleep.", e);
+		}
+		finally {
+
+			butelkatrClient.sendBeerQuantity(new BeerQuantityDto(wort.getQuantity()));
+
+			updateStateAndNotify(-wort.getQuantity());
 		}
 	}
 
@@ -52,8 +53,8 @@ public class Warehouse
 		prezentatrClient.sendWarehouseState(new WarehouseStateDto(newState));
 	}
 
-	public AtomicInteger getWarehouseState()
+	public int getWarehouseState()
 	{
-		return warehouseState;
+		return warehouseState.get();
 	}
 }

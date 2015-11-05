@@ -10,13 +10,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 
 @Component
-public class WarehouseLevel
+public class WarehouseMetrics
 {
-	private final Warehouse warehouse;
-
 	@Autowired
-	WarehouseLevel(MetricRegistry metricRegistry,  Warehouse warehouse){
-		this.warehouse = warehouse;
-		metricRegistry.register("amountInWarehouse", (Gauge<Integer>) () -> warehouse.getWarehouseState().get());
+	WarehouseMetrics(MetricRegistry metricRegistry, Warehouse warehouse){
+		metricRegistry.register("amountInWarehouse", (Gauge<Integer>) () -> warehouse.getWarehouseState());
 	}
 }

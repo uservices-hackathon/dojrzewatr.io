@@ -1,29 +1,35 @@
 package pl.uservices.dojrzewatr.domain;
 
-/**
- * Created: 11/5/15
- *
- * @author Ryszard Bancarzewski <ryszard.bancarzewski@sap.com>
- */
+import static org.apache.commons.lang.builder.ToStringStyle.SHORT_PREFIX_STYLE;
+
+import javax.validation.constraints.Min;
+
+import org.apache.commons.lang.builder.ToStringBuilder;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Wort
 {
+	@Min(value=1, message="Value must be greater then 0")
+	private final Integer quantity;
 
-	private final long timestamp;
-	private final Integer amount;
-
-	public Wort(final Integer amount, final long timestamp)
+	@JsonCreator
+	public Wort(@JsonProperty("quantity") final Integer quantity)
 	{
-		this.amount = amount;
-		this.timestamp = timestamp;
+		this.quantity = quantity;
 	}
 
-	public Integer getAmount()
+	public Integer getQuantity()
 	{
-		return amount;
+		return quantity;
 	}
 
-	public long getTimestamp()
+	@Override
+	public String toString()
 	{
-		return timestamp;
+		return new ToStringBuilder(this, SHORT_PREFIX_STYLE) //
+				.append("quantity", quantity) //
+				.toString();
 	}
 }
