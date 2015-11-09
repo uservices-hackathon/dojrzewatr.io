@@ -10,7 +10,7 @@ io.codearte.accurest.dsl.GroovyDsl.make {
                         { "type": "MALT", "quantity": "${value(stub(regex("[0-9]+")), test(1000))}" },
                         { "type" : "WATER", "quantity": "${value(stub(regex("[0-9]+")), test(1000))}" },
                         { "type" : "HOP", "quantity": "${value(stub(regex("[0-9]+")), test(1000))}" },
-                        { "type" : "YIEST", "quantity": "${value(stub(regex("[0-9]+")), test(1000))}" }
+                        { "type" : "YEAST", "quantity": "${value(stub(regex("[0-9]+")), test(1000))}" }
                 ]
         }""")
     }

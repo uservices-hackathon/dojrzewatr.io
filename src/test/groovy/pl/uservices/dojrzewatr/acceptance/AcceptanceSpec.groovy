@@ -28,7 +28,7 @@ class AcceptanceSpec extends MicroserviceMvcWiremockSpec {
                             {"type":"MALT","quantity":1000},
                             {"type":"WATER","quantity":1000},
                             {"type":"HOP","quantity":1000},
-                            {"type":"YIEST","quantity":1000}
+                            {"type":"YEAST","quantity":1000}
                         ]
                 }
                 '''))
