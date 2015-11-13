@@ -7,8 +7,6 @@ import com.ofg.infrastructure.correlationid.CorrelationIdUpdater;
 import com.ofg.infrastructure.web.resttemplate.fluent.ServiceRestClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.sleuth.Trace;
-import org.springframework.cloud.sleuth.TraceScope;
-import org.springframework.cloud.sleuth.sampler.AlwaysSampler;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.util.Assert;
 import pl.uservices.dojrzewatr.brewing.model.Ingredients;
@@ -48,17 +46,17 @@ class ButelkatrUpdater {
     }
 
     private void notifyPrezentatr() {
-        TraceScope scope = this.trace.startSpan("calling_prezentatr", new AlwaysSampler(), null);
+        //TraceScope scope = this.trace.startSpan("calling_prezentatr", new AlwaysSampler(), null);
         serviceRestClient.forService("prezentatr")
                 .put().onUrl("/feed/dojrzewatr")
                 .withoutBody()
                 .withHeaders().contentType(Version.PREZENTATR_V1)
                 .andExecuteFor().ignoringResponse();
-        scope.close();
+        //scope.close();
     }
 
     private void notifyButelkatr(Ingredients ingredients) {
-        TraceScope scope = this.trace.startSpan("calling_butelkatr", new AlwaysSampler(), null);
+        //TraceScope scope = this.trace.startSpan("calling_butelkatr", new AlwaysSampler(), null);
         serviceRestClient.forService("butelkatr")
                 .post()
                 .onUrl("/bottle")
@@ -66,7 +64,7 @@ class ButelkatrUpdater {
                 .withHeaders().contentType(Version.BUTELKATR_V1)
                 .andExecuteFor()
                 .ignoringResponse();
-        scope.close();
+        //scope.close();
     }
 
     private Integer getQuantity(Ingredients ingredients) {
