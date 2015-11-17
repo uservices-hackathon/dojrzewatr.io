@@ -6,6 +6,7 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 import com.ofg.infrastructure.correlationid.CorrelationIdUpdater;
 import com.ofg.infrastructure.web.resttemplate.fluent.ServiceRestClient;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.sleuth.Span;
 import org.springframework.cloud.sleuth.Trace;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.util.Assert;
@@ -31,7 +32,7 @@ class ButelkatrUpdater {
     }
 
     @Async
-    public void updateButelkatrAboutBrewedBeer(final Ingredients ingredients, final String correlationId) {
+    public void updateButelkatrAboutBrewedBeer(final Ingredients ingredients, final Span correlationId) {
         CorrelationIdUpdater.updateCorrelationId(correlationId);
         notifyPrezentatr();
         try {
