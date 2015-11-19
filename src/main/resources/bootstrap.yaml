@@ -5,4 +5,5 @@ spring.autoconfigure.exclude: org.springframework.cloud.client.loadbalancer.Load
 
 spring:
   application:
-    name: butelkatr
+    name: dojrzewatr
+

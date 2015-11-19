@@ -1,6 +1,5 @@
 package pl.uservices.dojrzewatr.brewing;
 
-import com.ofg.infrastructure.correlationid.CorrelationIdHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +21,6 @@ public class BrewController {
 
     @RequestMapping(method = RequestMethod.POST)
     public void distributeIngredients(@RequestBody Ingredients ingredients) {
-        butelkatrUpdater.updateButelkatrAboutBrewedBeer(ingredients, CorrelationIdHolder.get());
+        butelkatrUpdater.updateButelkatrAboutBrewedBeer(ingredients);
     }
 }

@@ -1,7 +1,6 @@
 package pl.uservices.dojrzewatr.brewing;
 
 import com.codahale.metrics.MetricRegistry;
-import com.nurkiewicz.asyncretry.RetryExecutor;
 import com.ofg.infrastructure.discovery.ServiceResolver;
 import com.ofg.infrastructure.web.resttemplate.fluent.ServiceRestClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +21,8 @@ import javax.annotation.PostConstruct;
 class BrewConfiguration {
 
     @Bean
-    ButelkatrUpdater butelkatrUpdater(ServiceRestClient serviceRestClient, RetryExecutor retryExecutor, MetricRegistry metricRegistry, Trace trace) {
-        return new ButelkatrUpdater(serviceRestClient, retryExecutor, brewProperties(), metricRegistry, trace);
+    ButelkatrUpdater butelkatrUpdater(ServiceRestClient serviceRestClient, MetricRegistry metricRegistry, Trace trace) {
+        return new ButelkatrUpdater(serviceRestClient, brewProperties(), metricRegistry, trace);
     }
 
     @Bean
@@ -38,8 +37,8 @@ class BrewConfiguration {
 
     @Bean
     @Primary
-    public ServiceRestClient serviceRestClientWithRestTemplate(RestTemplate restTemplate, ServiceResolver serviceResolver, ZookeeperDependencies zookeeperDependencies) {
-        return new ServiceRestClient(restTemplate, serviceResolver, zookeeperDependencies);
+    public ServiceRestClient serviceRestClientWithRestTemplate(RestTemplate restTemplate, ServiceResolver serviceResolver, ZookeeperDependencies zookeeperDependencies, Trace trace) {
+        return new ServiceRestClient(restTemplate, serviceResolver, zookeeperDependencies, trace);
     }
 
     @Autowired RestTemplate restTemplate;
