@@ -1,4 +1,4 @@
-spring.application.name: uservices/dojrzewatr
+spring.application.name: dojrzewatr
 
 logging:
   pattern:
@@ -8,11 +8,3 @@ server:
   port: 9093
 
 spring.cloud.zookeeper.discovery.root: /pl
-spring.cloud.zookeeper:
-  # prefix is not working ATM - it's not combining the uservices/dojrzewatr
-  prefix: uservices/
-  dependencies:
-    prezentatr:
-      path: prezentatr
-    butelkatr:
-      path: butelkatr

@@ -1,6 +1,7 @@
 package pl.uservices.dojrzewatr.brewing;
 
 import org.springframework.cloud.netflix.feign.FeignClient;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import pl.uservices.dojrzewatr.brewing.model.Version;
 
@@ -14,5 +15,5 @@ public interface PrezentatrClient {
             produces = Version.PREZENTATR_V1,
             consumes = Version.PREZENTATR_V1,
             method = PUT)
-    String dojrzewatr();
+    String dojrzewatr(@RequestHeader("PROCESS-ID") String processId);
 }

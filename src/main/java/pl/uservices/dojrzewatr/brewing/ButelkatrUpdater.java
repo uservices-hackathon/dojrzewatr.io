@@ -29,9 +29,9 @@ class ButelkatrUpdater {
     }
 
     @Async
-    public void updateButelkatrAboutBrewedBeer(final Ingredients ingredients) {
-        Span correlationId = TraceContextHolder.getCurrentSpan();
-        notifyPrezentatr(correlationId);
+    public void updateButelkatrAboutBrewedBeer(final Ingredients ingredients, String processId) {
+        log.info("Current trace id is equal [{}]", processId);
+        notifyPrezentatr(processId);
         try {
             Long timeout = brewProperties.getTimeout();
             log.info("Brewing beer... it will take [{}] ms", timeout);
@@ -39,19 +39,19 @@ class ButelkatrUpdater {
         } catch (InterruptedException e) {
             log.error("Exception occurred while brewing beer", e);
         }
-        notifyButelkatr(ingredients, correlationId);
+        notifyButelkatr(ingredients, processId);
     }
 
-    private void notifyPrezentatr(Span correlationId) {
-        Trace scope = this.traceManager.startSpan("calling_prezentatr", correlationId);
-        prezentatrClient.dojrzewatr();
-        traceManager.close(scope);
+    private void notifyPrezentatr(String correlationId) {
+        //Trace scope = this.traceManager.startSpan("calling_prezentatr", correlationId);
+        prezentatrClient.dojrzewatr(correlationId);
+        //traceManager.close(scope);
     }
 
-    private void notifyButelkatr(Ingredients ingredients, Span correlationId) {
-        Trace scope = this.traceManager.startSpan("calling_butelkatr", correlationId);
-        butelkatrClient.bottle(new Wort(getQuantity(ingredients)));
-        traceManager.close(scope);
+    private void notifyButelkatr(Ingredients ingredients, String correlationId) {
+        //Trace scope = this.traceManager.startSpan("calling_butelkatr", correlationId);
+        butelkatrClient.bottle(new Wort(getQuantity(ingredients)), correlationId);
+        //traceManager.close(scope);
     }
 
     private Integer getQuantity(Ingredients ingredients) {
