@@ -1,37 +1,34 @@
 package pl.uservices.dojrzewatr.brewing;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cloud.sleuth.Span;
-import org.springframework.cloud.sleuth.Trace;
 import org.springframework.cloud.sleuth.TraceManager;
-import org.springframework.cloud.sleuth.trace.TraceContextHolder;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.util.Assert;
 import pl.uservices.dojrzewatr.brewing.model.Ingredients;
 import pl.uservices.dojrzewatr.brewing.model.Wort;
 
 @Slf4j
-class ButelkatrUpdater {
+class BottlingServiceUpdater {
 
     private final BrewProperties brewProperties;
     private final TraceManager traceManager;
-    private final PrezentatrClient prezentatrClient;
-    private final ButelkatrClient butelkatrClient;
+    private final PresentingServiceClient prezentatrClient;
+    private final BottlingServiceClient bottlingServiceClient;
 
-    public ButelkatrUpdater(BrewProperties brewProperties,
-                            TraceManager traceManager,
-                            PrezentatrClient prezentatrClient,
-                            ButelkatrClient butelkatrClient) {
+    public BottlingServiceUpdater(BrewProperties brewProperties,
+                                  TraceManager traceManager,
+                                  PresentingServiceClient prezentatrClient,
+                                  BottlingServiceClient bottlingServiceClient) {
         this.brewProperties = brewProperties;
         this.traceManager = traceManager;
         this.prezentatrClient = prezentatrClient;
-        this.butelkatrClient = butelkatrClient;
+        this.bottlingServiceClient = bottlingServiceClient;
     }
 
     @Async
-    public void updateButelkatrAboutBrewedBeer(final Ingredients ingredients, String processId) {
+    public void updateBottlingServiceAboutBrewedBeer(final Ingredients ingredients, String processId) {
         log.info("Current trace id is equal [{}]", processId);
-        notifyPrezentatr(processId);
+        notifyPresentingService(processId);
         try {
             Long timeout = brewProperties.getTimeout();
             log.info("Brewing beer... it will take [{}] ms", timeout);
@@ -39,18 +36,18 @@ class ButelkatrUpdater {
         } catch (InterruptedException e) {
             log.error("Exception occurred while brewing beer", e);
         }
-        notifyButelkatr(ingredients, processId);
+        notifyBottlingService(ingredients, processId);
     }
 
-    private void notifyPrezentatr(String correlationId) {
+    private void notifyPresentingService(String correlationId) {
         //Trace scope = this.traceManager.startSpan("calling_prezentatr", correlationId);
         prezentatrClient.dojrzewatr(correlationId);
         //traceManager.close(scope);
     }
 
-    private void notifyButelkatr(Ingredients ingredients, String correlationId) {
+    private void notifyBottlingService(Ingredients ingredients, String correlationId) {
         //Trace scope = this.traceManager.startSpan("calling_butelkatr", correlationId);
-        butelkatrClient.bottle(new Wort(getQuantity(ingredients)), correlationId);
+        bottlingServiceClient.bottle(new Wort(getQuantity(ingredients)), correlationId);
         //traceManager.close(scope);
     }
 

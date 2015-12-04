@@ -7,13 +7,13 @@ import pl.uservices.dojrzewatr.brewing.model.Version;
 
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
-@FeignClient("prezentatr")
+@FeignClient("presenting")
 @RequestMapping("/feed")
-public interface PrezentatrClient {
+public interface PresentingServiceClient {
     @RequestMapping(
-            value = "/dojrzewatr",
-            produces = Version.PREZENTATR_V1,
-            consumes = Version.PREZENTATR_V1,
+            value = "/maturing",
+            produces = Version.PRESENTING_V1,
+            consumes = Version.PRESENTING_V1,
             method = PUT)
     String dojrzewatr(@RequestHeader("PROCESS-ID") String processId);
 }

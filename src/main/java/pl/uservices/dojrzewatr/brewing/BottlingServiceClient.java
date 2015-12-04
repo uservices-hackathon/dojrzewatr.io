@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import pl.uservices.dojrzewatr.brewing.model.Version;
 import pl.uservices.dojrzewatr.brewing.model.Wort;
 
-@FeignClient("butelkatr")
-@RequestMapping(value = "/bottle", consumes = Version.BUTELKATR_V1,
+@FeignClient("bottling")
+@RequestMapping(value = "/bottle", consumes = Version.BOTTLING_V1,
         produces = MediaType.APPLICATION_JSON_VALUE)
-public interface ButelkatrClient {
+public interface BottlingServiceClient {
     @RequestMapping(method = RequestMethod.POST,
-            produces = Version.BUTELKATR_V1, consumes = Version.BUTELKATR_V1)
+            produces = Version.BOTTLING_V1, consumes = Version.BOTTLING_V1)
     void bottle(Wort wort, @RequestHeader("PROCESS-ID") String processId);
 }

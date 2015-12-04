@@ -6,18 +6,18 @@ import pl.uservices.dojrzewatr.brewing.model.Ingredients;
 import pl.uservices.dojrzewatr.brewing.model.Version;
 
 @RestController
-@RequestMapping(value = "/brew", consumes = Version.DOJRZEWATR_V1)
+@RequestMapping(value = "/brew", consumes = Version.MATURING_V1)
 public class BrewController {
 
-    private final ButelkatrUpdater butelkatrUpdater;
+    private final BottlingServiceUpdater bottlingServiceUpdater;
 
     @Autowired
-    public BrewController(ButelkatrUpdater butelkatrUpdater) {
-        this.butelkatrUpdater = butelkatrUpdater;
+    public BrewController(BottlingServiceUpdater bottlingServiceUpdater) {
+        this.bottlingServiceUpdater = bottlingServiceUpdater;
     }
 
     @RequestMapping(method = RequestMethod.POST)
     public void distributeIngredients(@RequestBody Ingredients ingredients, @RequestHeader("PROCESS-ID") String processId) {
-        butelkatrUpdater.updateButelkatrAboutBrewedBeer(ingredients, processId);
+        bottlingServiceUpdater.updateBottlingServiceAboutBrewedBeer(ingredients, processId);
     }
 }

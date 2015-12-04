@@ -8,9 +8,9 @@ import org.springframework.context.annotation.Configuration;
 class BrewConfiguration {
 
     @Bean
-    ButelkatrUpdater butelkatrUpdater(TraceManager trace, PrezentatrClient prezentatrClient,
-                                      ButelkatrClient butelkatrClient) {
-        return new ButelkatrUpdater(brewProperties(), trace, prezentatrClient, butelkatrClient);
+    BottlingServiceUpdater butelkatrUpdater(TraceManager trace, PresentingServiceClient prezentatrClient,
+                                            BottlingServiceClient bottlingServiceClient) {
+        return new BottlingServiceUpdater(brewProperties(), trace, prezentatrClient, bottlingServiceClient);
     }
 
     @Bean
