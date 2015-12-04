@@ -1,9 +1,18 @@
-spring.application.name: dojrzewatr
-metrics.path.app: dojrzewatr
-rest.api.urls.to.list: .*brew.*
+spring.application.name: uservices/dojrzewatr
 
-stubrunner.stubs:
-  repository.root: "http://nexus.uservices.pl:8081/nexus/content/repositories/releases/"
+logging:
+  pattern:
+    level: '%clr([trace=%X{X-Trace-Id:-},span=%X{X-Span-Id:-}]){yellow} %5p'
 
-stubrunner:
-  use-microservice-definitions: true
+server:
+  port: 9093
+
+spring.cloud.zookeeper.discovery.root: /pl
+spring.cloud.zookeeper:
+  # prefix is not working ATM - it's not combining the uservices/dojrzewatr
+  prefix: uservices/
+  dependencies:
+    prezentatr:
+      path: prezentatr
+    butelkatr:
+      path: butelkatr
