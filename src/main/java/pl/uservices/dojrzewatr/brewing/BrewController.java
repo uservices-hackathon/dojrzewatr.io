@@ -17,7 +17,12 @@ public class BrewController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public void distributeIngredients(@RequestBody Ingredients ingredients, @RequestHeader("PROCESS-ID") String processId) {
+    public void distributeIngredients(@RequestBody Ingredients ingredients,
+                                      @RequestHeader("PROCESS-ID") String processId,
+                                      @RequestHeader(value = TestConfigurationHolder.TEST_COMMUNICATION_TYPE_HEADER_NAME,
+                                              defaultValue = "REST_TEMPLATE", required = false)
+                                          TestConfigurationHolder.TestCommunicationType testCommunicationType) {
+        TestConfigurationHolder.TEST_CONFIG.set(TestConfigurationHolder.builder().testCommunicationType(testCommunicationType).build());
         bottlingServiceUpdater.updateBottlingServiceAboutBrewedBeer(ingredients, processId);
     }
 }
