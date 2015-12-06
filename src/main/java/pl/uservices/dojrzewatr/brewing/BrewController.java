@@ -22,7 +22,7 @@ public class BrewController {
                                       @RequestHeader(value = TestConfigurationHolder.TEST_COMMUNICATION_TYPE_HEADER_NAME,
                                               defaultValue = "REST_TEMPLATE", required = false)
                                           TestConfigurationHolder.TestCommunicationType testCommunicationType) {
-        TestConfigurationHolder.TEST_CONFIG.set(TestConfigurationHolder.builder().testCommunicationType(testCommunicationType).build());
-        bottlingServiceUpdater.updateBottlingServiceAboutBrewedBeer(ingredients, processId);
+        TestConfigurationHolder configurationHolder = TestConfigurationHolder.builder().testCommunicationType(testCommunicationType).build();
+        bottlingServiceUpdater.updateBottlingServiceAboutBrewedBeer(ingredients, processId, configurationHolder);
     }
 }

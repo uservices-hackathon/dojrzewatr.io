@@ -2,7 +2,9 @@ package pl.uservices.dojrzewatr.brewing;
 
 import java.net.URI;
 
+import org.springframework.cloud.sleuth.Trace;
 import org.springframework.cloud.sleuth.TraceManager;
+import org.springframework.cloud.sleuth.trace.TraceContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
@@ -40,7 +42,8 @@ class BottlingServiceUpdater {
     }
 
     @Async
-    public void updateBottlingServiceAboutBrewedBeer(final Ingredients ingredients, String processId) {
+    public void updateBottlingServiceAboutBrewedBeer(final Ingredients ingredients, String processId, TestConfigurationHolder configurationHolder) {
+        TestConfigurationHolder.TEST_CONFIG.set(configurationHolder);
         log.info("Current trace id is equal [{}]", processId);
         notifyPresentingService(processId);
         try {
@@ -54,9 +57,7 @@ class BottlingServiceUpdater {
     }
 
     private void notifyPresentingService(String correlationId) {
-        //Trace scope = this.traceManager.startSpan("calling_prezentatr", correlationId);
-        //callPresentingViaFeign(correlationId);
-        //traceManager.close(scope);
+        Trace scope = this.traceManager.startSpan("calling_presenting", TraceContextHolder.getCurrentSpan());
         switch (TestConfigurationHolder.TEST_CONFIG.get().getTestCommunicationType()) {
             case FEIGN:
                 callPresentingViaFeign(correlationId);
@@ -64,27 +65,26 @@ class BottlingServiceUpdater {
             default:
                 useRestTemplateToCallPresenting(correlationId);
         }
+        traceManager.close(scope);
     }
 
     private void callPresentingViaFeign(String correlationId) {
-        prezentatrClient.dojrzewatr(correlationId);
+        prezentatrClient.maturingFeed(correlationId);
     }
 
     private void notifyBottlingService(Ingredients ingredients, String correlationId) {
-        //Trace scope = this.traceManager.startSpan("calling_butelkatr", correlationId);
-        //callBottlingViaFeign(ingredients, correlationId);
-        //traceManager.close(scope);
+        Trace scope = this.traceManager.startSpan("calling_bottling", TraceContextHolder.getCurrentSpan());
         switch (TestConfigurationHolder.TEST_CONFIG.get().getTestCommunicationType()) {
             case FEIGN:
                 callBottlingViaFeign(ingredients, correlationId);
                 break;
             default:
-                useRestTemplateToCallBottling(new Wort(getQuantity(ingredients)), correlationId);;
+                useRestTemplateToCallBottling(new Wort(getQuantity(ingredients)), correlationId);
         }
+        traceManager.close(scope);
     }
 
-
-    //TODO: Toggle on property or sth
+    //TODO: Remove duplication
     private void useRestTemplateToCallPresenting(String processId) {
         log.info("Calling presenting - process id [{}]", processId);
         HttpHeaders headers = new HttpHeaders();
@@ -95,7 +95,7 @@ class BottlingServiceUpdater {
         String url = "feed/maturing";
         URI uri = URI.create("http://" + serviceName + "/" + url);
         HttpMethod method = HttpMethod.PUT;
-        RequestEntity<String> requestEntity = new RequestEntity<>("SOme body", headers, method, uri);
+        RequestEntity<String> requestEntity = new RequestEntity<>("Some body", headers, method, uri);
         restTemplate.exchange(requestEntity, String.class);
     }
 
